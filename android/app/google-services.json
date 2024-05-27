@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "538349270145",
+    "project_id": "assistant-29a07",
+    "storage_bucket": "assistant-29a07.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:538349270145:android:755eeed195d56ccba84980",
+        "android_client_info": {
+          "package_name": "com.example.voice_assistent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgvOtYCEooV7_ixIwQbQjp8CmVIlljXro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

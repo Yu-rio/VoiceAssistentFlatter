@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'AI.dart';
 import 'message.dart';
 
@@ -13,8 +14,25 @@ class Home extends StatefulWidget{
 }
 
 class _HomeState extends State<Home> {
-  final List<Message> _messages = <Message>[];
+  List<Message> _messages = <Message>[];
+  final fsconnect = FirebaseFirestore.instance;
   final _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    get_dialogue().then((value) {
+      setState(() {
+        _messages = value;
+        _messages.sort((a, b) => b.date.compareTo(a.date));
+        _messages = _messages.map((message) {
+          message.date = message.date.substring(0, message.date.length - 7);
+          return message;
+        }).toList();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,6 +134,24 @@ class _HomeState extends State<Home> {
       _messages.insert(0, Message(text: question, isSend: true, date: formattedQuestionDate));
       _messages.insert(0, Message(text: answer, isSend: false, date: formattedAnswerDate));
     });
+
+    var dialogue = fsconnect.collection('dialogue');
+    dialogue.add({'text': question, 'isSend': true, 'date': questionTime});
+    dialogue.add({'text': answer, 'isSend': false, 'date': answerTime});
+  }
+
+  Future<List<Message>> get_dialogue() async {
+    var data = await fsconnect.collection("dialogue").get();
+    List<Message> ms = [];
+    for (var i in data.docs) {
+      DateTime date = (i.data()["date"] as Timestamp).toDate();
+      ms.add(Message(
+        text: i.data()["text"],
+        isSend: i.data()["isSend"],
+        date: DateFormat('yyyy-MM-dd – kk:mm:ss.SSS').format(date),
+      ));
+    }
+    return ms;
   }
 }
 
